@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, [Name]! 🎂</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap');
+
+    :root {
+      --pink: #f9a8c9;
+      --pink-dark: #e07aaa;
+      --yellow: #fde68a;
+      --purple: #c4b5fd;
+      --white: #fff9fb;
+      --text: #3d2c3e;
+      --card: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: linear-gradient(135deg, #ffe4f0 0%, #f0e6ff 50%, #fef3c7 100%);
+      font-family: 'Quicksand', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    /* ── floating hearts background ── */
+    .hearts-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; overflow: hidden; z-index: 0;
+    }
+    .heart {
+      position: absolute; bottom: -60px; font-size: 1.4rem;
+      animation: floatUp linear infinite;
+      opacity: 0.35;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0.35; }
+      100% { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+    }
+
+    /* ── layout ── */
+    .container {
+      position: relative; z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ── header ── */
+    .header {
+      text-align: center;
+      padding: 2.5rem 1.5rem 2rem;
+      background: var(--card);
+      border-radius: 2rem;
+      box-shadow: 0 4px 24px rgba(240,130,180,0.15);
+    }
+    .header .emoji-row {
+      font-size: 2.4rem;
+      letter-spacing: 0.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .header h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(2rem, 7vw, 3rem);
+      color: var(--pink-dark);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .header .subtitle {
+      font-size: 1.05rem;
+      color: #9370a0;
+      font-weight: 600;
+    }
+
+    /* ── section cards ── */
+    .card {
+      background: var(--card);
+      border-radius: 1.5rem;
+      padding: 1.75rem 2rem;
+      box-shadow: 0 4px 20px rgba(180,120,200,0.12);
+    }
+    .card h2 {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.4rem;
+      color: var(--pink-dark);
+      margin-bottom: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ── reasons list ── */
+    .reasons-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .reasons-list li {
+      background: #fff0f7;
+      border-left: 4px solid var(--pink);
+      border-radius: 0 0.75rem 0.75rem 0;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    /* ── question reveal buttons ── */
+    .questions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.85rem;
+    }
+    .q-btn {
+      background: linear-gradient(135deg, var(--purple), #a78bfa);
+      color: #fff;
+      border: none;
+      border-radius: 1rem;
+      padding: 0.85rem 1rem;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .q-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(150,100,220,0.3); }
+    .q-btn:active { transform: scale(0.97); }
+    .q-btn.revealed {
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+    }
+    .q-answer {
+      margin-top: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #fff0f7;
+      border-radius: 0.85rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      display: none;
+      border: 1.5px dashed var(--pink);
+    }
+    .q-item.open .q-answer { display: block; }
+
+    /* ── memory gallery ── */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.85rem;
+    }
+    .gallery-slot {
+      aspect-ratio: 1;
+      border-radius: 1rem;
+      overflow: hidden;
+      background: #f3e8ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      border: 2px dashed var(--purple);
+      position: relative;
+    }
+    .gallery-slot img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 1rem;
+    }
+    .gallery-slot .caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.88);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 6px;
+      text-align: center;
+      border-radius: 0 0 1rem 1rem;
+    }
+
+    /* ── big message ── */
+    .message-text {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text);
+      white-space: pre-line;
+    }
+
+    /* ── countdown ── */
+    .countdown-wrap {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .countdown-unit {
+      background: linear-gradient(135deg, var(--yellow), #fcd34d);
+      border-radius: 1rem;
+      padding: 1rem 1.4rem;
+      text-align: center;
+      min-width: 70px;
+    }
+    .countdown-unit .num {
+      font-family: 'Pacifico', cursive;
+      font-size: 2rem;
+      color: #92400e;
+      line-height: 1;
+    }
+    .countdown-unit .label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #b45309;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05rem;
+    }
+
+    /* ── wish button ── */
+    .wish-section { text-align: center; }
+    .wish-btn {
+      background: linear-gradient(135deg, var(--pink-dark), #c026d3);
+      color: #fff;
+      border: none;
+      border-radius: 2rem;
+      padding: 1rem 2.5rem;
+      font-family: 'Pacifico', cursive;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 18px rgba(200,40,180,0.3);
+    }
+    .wish-btn:hover { transform: scale(1.05); box-shadow: 0 8px 28px rgba(200,40,180,0.4); }
+    .confetti-msg {
+      margin-top: 1.25rem;
+      font-size: 1.4rem;
+      display: none;
+      animation: popIn 0.4s ease;
+    }
+    @keyframes popIn {
+      0%   { transform: scale(0.5); opacity: 0; }
+      70%  { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ── footer ── */
+    .footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #c084a0;
+      font-weight: 600;
+      padding-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- floating hearts -->
+<div class="hearts-bg" id="hearts"></div>
+
+<div class="container">
+
+  <!-- ★ HEADER – change the name! -->
+  <header class="header">
+    <div class="emoji-row">🎂 🎉 🎈</div>
+    <h1>Happy Birthday,<br>[His Name]!</h1>
+    <p class="subtitle">You are so so loved ✨</p>
+  </header>
+
+
+  <!-- ★ COUNTDOWN – set his birthday date in the script below -->
+  <section class="card">
+    <h2>⏳ Days we've been us</h2>
+    <div class="countdown-wrap" id="countdown">
+      <div class="countdown-unit"><div class="num" id="cd-days">–</div><div class="label">Days</div></div>
+      <div class="countdown-unit"><div class="num" id="cd-hours">–</div><div class="label">Hours</div></div>
+      <div class="countdown-unit"><div class="num" id="cd-mins">–</div><div class="label">Mins</div></div>
+      <div class="countdown-unit"><div class="num" id="cd-secs">–</div><div class="label">Secs</div></div>
+    </div>
+    <!-- Change the label above to whatever you want, e.g. "Until we're in the same city" -->
+  </section>
+
+
+  <!-- ★ REASONS I LOVE YOU – add as many as you want! -->
+  <section class="card">
+    <h2>💛 Reasons I love you</h2>
+    <ul class="reasons-list">
+      <li>The way you [fill this in]</li>
+      <li>How you always [fill this in]</li>
+      <li>That time you [fill this in] and I knew</li>
+      <li>Your laugh. Just… your laugh.</li>
+      <li>Add more here! ✍️</li>
+    </ul>
+  </section>
+
+
+  <!-- ★ QUESTIONS – tap a button to reveal your answer -->
+  <section class="card">
+    <h2>💬 Questions for you</h2>
+    <p style="font-size:0.9rem; color:#9370a0; margin-bottom:1rem;">Tap each one to see my answer 👇</p>
+    <div class="questions-grid" id="questions-grid"></div>
+  </section>
+
+
+  <!-- ★ MEMORY GALLERY – add image src paths or leave the emoji placeholders -->
+  <section class="card">
+    <h2>📸 Our little moments</h2>
+    <div class="gallery" id="gallery">
+      <!-- Add real photos by replacing the emoji and adding an <img src="yourphoto.jpg"> inside the slot -->
+      <div class="gallery-slot">📷<div class="caption">Memory 1</div></div>
+      <div class="gallery-slot">📷<div class="caption">Memory 2</div></div>
+      <div class="gallery-slot">📷<div class="caption">Memory 3</div></div>
+      <div class="gallery-slot">📷<div class="caption">Memory 4</div></div>
+    </div>
+  </section>
+
+
+  <!-- ★ LOVE LETTER – write your message here -->
+  <section class="card">
+    <h2>💌 A little note</h2>
+    <p class="message-text">
+Hi [Name],
+
+I wrote this little website because I wanted you to feel celebrated today even though we're far apart.
+
+[Write your message here. Tell him what he means to you, a favourite memory, your favourite thing about him, whatever feels right. This whole site was made just for him — make it count! 💕]
+
+I love you so much.
+– [Your name] xo
+    </p>
+  </section>
+
+
+  <!-- ★ BIG BIRTHDAY BUTTON -->
+  <section class="card wish-section">
+    <button class="wish-btn" onclick="triggerWish()">🎂 Make a wish!</button>
+    <div class="confetti-msg" id="wish-msg">
+      🎊✨ Happy Birthday, [Name]! ✨🎊<br>
+      <span style="font-size:1rem; font-family:Quicksand,sans-serif">Wishing you the most amazing year 💕</span>
+    </div>
+  </section>
+
+
+  <footer class="footer">Made with 💕 just for you · [Year]</footer>
+</div>
+
+
+<script>
+  // ════════════════════════════════════════════
+  //  ★ CUSTOMIZE THESE VALUES
+  // ════════════════════════════════════════════
+
+  // Change this to the date you two got together (YYYY, MM-1, DD)
+  // Month is 0-indexed: Jan=0, Feb=1, Mar=2 ... Dec=11
+  const TOGETHER_SINCE = new Date(2022, 2, 14); // example: March 14 2022
+
+  // Your questions & answers – add/remove objects in this array
+  const QA = [
+    { q: "Favourite memory of us?",   a: "The time we [fill this in] – I think about it all the time." },
+    { q: "What I miss most rn?",      a: "[Fill this in – be specific and sweet!]" },
+    { q: "One thing I admire about you?", a: "Honestly? [Fill this in]." },
+    { q: "Our song?",                 a: "[Song name] – it's ours now 🎵" },
+    { q: "Where I want to take you?", a: "[A place you want to go together]" },
+    { q: "Favourite thing you do?",   a: "[Something cute/funny/sweet he does]" },
+  ];
+
+  // ════════════════════════════════════════════
+
+  // -- countdown --
+  function updateCountdown() {
+    const now  = new Date();
+    const diff = now - TOGETHER_SINCE;
+    const days  = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000)  / 60000);
+    const secs  = Math.floor((diff % 60000)    / 1000);
+    document.getElementById('cd-days').textContent  = days;
+    document.getElementById('cd-hours').textContent = hours;
+    document.getElementById('cd-mins').textContent  = mins;
+    document.getElementById('cd-secs').textContent  = secs;
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // -- build Q&A buttons --
+  const grid = document.getElementById('questions-grid');
+  QA.forEach((item, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'q-item';
+    wrap.innerHTML = `
+      <button class="q-btn" onclick="revealQ(this, ${i})">${item.q}</button>
+      <div class="q-answer" id="ans-${i}">${item.a}</div>
+    `;
+    grid.appendChild(wrap);
+  });
+
+  function revealQ(btn, i) {
+    const item = btn.closest('.q-item');
+    item.classList.toggle('open');
+    btn.classList.toggle('revealed');
+  }
+
+  // -- wish button --
+  function triggerWish() {
+    document.getElementById('wish-msg').style.display = 'block';
+    spawnConfetti();
+  }
+
+  // -- floating hearts --
+  const heartsContainer = document.getElementById('hearts');
+  const heartChars = ['♥','♡','✿','★'];
+  for (let i = 0; i < 18; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.animationDuration = (8 + Math.random() * 12) + 's';
+    h.style.animationDelay    = (Math.random() * 10) + 's';
+    h.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+    heartsContainer.appendChild(h);
+  }
+
+  // -- confetti burst on wish --
+  function spawnConfetti() {
+    const colors = ['#f9a8c9','#c4b5fd','#fde68a','#6ee7b7','#f87171'];
+    for (let i = 0; i < 80; i++) {
+      const c = document.createElement('div');
+      c.style.cssText = `
+        position:fixed; z-index:9999; pointer-events:none;
+        width:${6+Math.random()*6}px; height:${6+Math.random()*6}px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        border-radius:${Math.random()>0.5?'50%':'2px'};
+        left:${Math.random()*100}vw; top:20vh;
+        animation: confettiFall ${1.5+Math.random()*2}s ease-in forwards;
+      `;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3500);
+    }
+  }
+  const style = document.createElement('style');
+  style.textContent = `@keyframes confettiFall {
+    0%   { transform: translateY(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(80vh) rotate(720deg); opacity:0; }
+  }`;
+  document.head.appendChild(style);
+</script>
+</body>
+</html>
